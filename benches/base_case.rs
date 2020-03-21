@@ -6,6 +6,7 @@ use matrixmultiply::sgemm;
 use nalgebra::{ArrayStorage, Dynamic, Matrix as NMatrix, VecStorage};
 use nalgebra::{U100, U20};
 use ndarray::Array;
+use tch::{Device, Kind, Tensor};
 type DMatrix = NMatrix<f32, Dynamic, Dynamic, VecStorage<f32, Dynamic, Dynamic>>;
 type SMatrix1000 = NMatrix<f32, U1000, U1000, ArrayStorage<f32, U1000, U1000>>;
 type SMatrix100 = NMatrix<f32, U100, U100, ArrayStorage<f32, U100, U100>>;
@@ -16,6 +17,11 @@ fn get_matrices(n: usize) -> (Matrix, Matrix) {
     let a: Matrix = vec![vec![0.1; n]; n];
     let b: Matrix = vec![vec![0.1; n]; n];
     (a, b)
+}
+fn matmul_torch(n: i64) {
+    let a = Tensor::ones(&[n, n], (Kind::Float, Device::Cpu)) * 0.1;
+    let b = Tensor::ones(&[n, n], (Kind::Float, Device::Cpu)) * 0.1;
+    let o = a * b;
 }
 fn matmul_nalgebra(n: usize) {
     let a = DMatrix::from_element(n, n, 0.1);
@@ -49,9 +55,9 @@ fn matmul_nalgebra_static(n: usize) {
 }
 fn matmul_baseline_static(n: usize) {
     match n {
-        1000 => {
-            let a = [[0.1 as f32; 1000]; 1000];
-            let b = [[0.1 as f32; 1000]; 1000];
+        100 => {
+            let a = [[0.1 as f32; 100]; 100];
+            let b = [[0.1 as f32; 100]; 100];
             let o = matmul_static(&a, &b);
         }
 
@@ -88,11 +94,11 @@ fn matmul(n: usize) {
         }
     }
 }
-fn matmul_static(a: &[[f32; 1000]; 1000], b: &[[f32; 1000]; 1000]) -> [[f32; 1000]; 1000] {
-    let mut out = [[0.0 as f32; 1000]; 1000];
-    for i in 0..1000 {
-        for j in 0..1000 {
-            for k in 0..1000 {
+fn matmul_static(a: &[[f32; 100]; 100], b: &[[f32; 100]; 100]) -> [[f32; 100]; 100] {
+    let mut out = [[0.0 as f32; 100]; 100];
+    for i in 0..100 {
+        for j in 0..100 {
+            for k in 0..100 {
                 unsafe {
                     *out.get_unchecked_mut(i).get_unchecked_mut(j) +=
                         a.get_unchecked(i).get_unchecked(k) * b.get_unchecked(k).get_unchecked(j);
@@ -139,9 +145,13 @@ fn base_matmul(c: &mut Criterion) {
         group.bench_with_input(BenchmarkId::new("NalgebraStatic", n), n, |b, &n| {
             b.iter(|| matmul_nalgebra_static(n));
         });
-        if *n == 1000 {
+        group.bench_with_input(BenchmarkId::new("Torch", n), n, |b, &n| {
+            b.iter(|| matmul_torch(n as i64));
+        });
+        if *n == 100 {
+            // Otherwise we get stack overflow
             group.bench_with_input(BenchmarkId::new("UncheckedStatic", n), n, |b, &n| {
-                b.iter(|| matmul_baseline_static(1000));
+                b.iter(|| matmul_baseline_static(n));
             });
         }
     }
