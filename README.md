@@ -13,5 +13,6 @@ Compile and run with `TORCH_CUDA_VERSION=10.2  RUSTFLAGS="-C target-cpu=native -
 Tested on a Dell XPS 15 Intel(R) Core(TM) i7-8750H CPU @ 2.20GHz (Has up to AVX2)
 ## Square matrix multiplication
 <img src="base_case.svg"/>
-## 200 x N matrix multiplication
+
+## N x 200 matrix multiplication
 <img src="non_square.svg"/>
