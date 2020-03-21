@@ -8,15 +8,18 @@ edition = "2018"
 
 [dependencies]
 ndarray = { version = "0.13.0", features = ["blas"] }
-blas-src = { version = "0.2.1", default-features = false, features = ["accelerate"] }
+blas-src = { version = "0.2.1", default-features = false, features = ["openblas"] }
 matrixmultiply = "0.2.3"
 nalgebra = "0.20.0"
 typenum = "1.11.2"
 tch = "0.1.6"
-#openblas-src = { version = "0.6", default-features = false, features = ["cblas", "system"] }
+openblas-src = { version = "0.6", default-features = false, features = ["cblas"] }
 [dev-dependencies]
 criterion = "0.3"
 
 [[bench]]
 name = "base_case"
 harness = false
+#[[bench]]
+#name = "non_square"
+#harness = false
