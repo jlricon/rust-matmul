@@ -10,11 +10,20 @@ export LD_LIBRARY_PATH=${LIBTORCH}/lib
 ```
 Compile and run with `TORCH_CUDA_VERSION=10.2  RUSTFLAGS="-C target-cpu=native -C codegen-units=1" cargo bench`. 
 
-Tested on a Dell XPS 15 Intel(R) Core(TM) i7-8750H CPU @ 2.20GHz (Has up to AVX2). Admittedly this test is at least a bit biased against torch; and it would probably excel if we had a real program running more operations.
+Tested on a Dell XPS 15 Intel(R) Core(TM) i7-8750H CPU @ 2.20GHz (Has up to AVX2). GPU is a 1050 Ti.
+ Admittedly this test is at least a bit biased against torch; and it would probably excel if we had a real program running more operations.
 
 All things considered, I would recommend ndarray as THE array/linalg crate of choice for the Rust ecosystem (If one is CPU bound).
 If however one is doing a lot of smaller matrix multiplications that can fit on the stack, then the statically allocated Nalgebra matrices would be the best.
-
+## What was tested
+1. Matrixmultiply (Has just two functions, sgemm and dgemm) using custom kernels rather than the more common BLAS.
+2. Ndarray uses OpenBLAS in this benchmark, but other backends can be configured (Like Intel's MKL or Apple's Accelerate framework)
+3. Nalgebra depends on matrixmultiply so I assume that at least for some operations it will be using that; accordingly its results were in line with Matrixmultiply (But it is way easier to use, sgemm needs one to use unsafe code.)
+4. Base is the regular hand coded matmul algorithm. Nothing fancy here.
+5. Unchecked is the same as 4.but using unsafe .get_unchecked() to get some extra speedup. Makes things faster but does not matter much.
+6. UncheckedStatic is the same as 5. but using statically allocated arrays instead of Vec. Improves performance somewhat.
+7. NalgebraStatic is using statically allocated matrices. This has a limit as the stack is not infinitely large, but performs really well at smaller sizes.
+8. Torch is the tch-rs bindings to libtorch, in this case with CUDA enabled.
 ## Square matrix multiplication
 <img src="base_case.svg"/>
 
