@@ -11,6 +11,7 @@ ndarray = { version = "0.13.0", features = ["blas"] }
 blas-src = { version = "0.2.1", default-features = false, features = ["accelerate"] }
 matrixmultiply = "0.2.3"
 nalgebra = "0.20.0"
+typenum = "1.11.2"
 #openblas-src = { version = "0.6", default-features = false, features = ["cblas", "system"] }
 [dev-dependencies]
 criterion = "0.3"

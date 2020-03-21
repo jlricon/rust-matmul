@@ -577,6 +577,7 @@ dependencies = [
  "matrixmultiply",
  "nalgebra",
  "ndarray",
+ "typenum",
 ]
 
 [[package]]
