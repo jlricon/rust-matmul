@@ -8,47 +8,41 @@ use nalgebra::{U100, U20};
 use ndarray::Array;
 use tch::{Device, Kind, Tensor};
 type DMatrix = NMatrix<f32, Dynamic, Dynamic, VecStorage<f32, Dynamic, Dynamic>>;
-type SMatrix1000 = NMatrix<f32, U1000, U1000, ArrayStorage<f32, U1000, U1000>>;
 type SMatrix100 = NMatrix<f32, U100, U100, ArrayStorage<f32, U100, U100>>;
 type SMatrix200 = NMatrix<f32, U200, U200, ArrayStorage<f32, U200, U200>>;
 type SMatrix20 = NMatrix<f32, U20, U20, ArrayStorage<f32, U20, U20>>;
-use typenum::{U1000, U200};
+use typenum::U200;
 fn get_matrices(n: usize) -> (Matrix, Matrix) {
     let a: Matrix = vec![vec![0.1; n]; n];
     let b: Matrix = vec![vec![0.1; n]; n];
     (a, b)
 }
 fn matmul_torch(n: i64) {
-    let a = Tensor::ones(&[n, n], (Kind::Float, Device::Cpu)) * 0.1;
-    let b = Tensor::ones(&[n, n], (Kind::Float, Device::Cpu)) * 0.1;
-    let o = a * b;
+    let a = Tensor::ones(&[n, n], (Kind::Float, Device::Cuda(0))) * 0.1;
+    let b = Tensor::ones(&[n, n], (Kind::Float, Device::Cuda(0))) * 0.1;
+    let o = a.matmul(&b);
 }
 fn matmul_nalgebra(n: usize) {
     let a = DMatrix::from_element(n, n, 0.1);
     let b = DMatrix::from_element(n, n, 0.1);
-    let o = a.dot(&b);
+    let o = a * b;
 }
 fn matmul_nalgebra_static(n: usize) {
     match n {
-        1000 => {
-            let a = SMatrix1000::repeat(0.1);
-            let b = SMatrix1000::repeat(0.1);
-            let o = a.dot(&b);
-        }
         100 => {
             let a = SMatrix100::repeat(0.1);
             let b = SMatrix100::repeat(0.1);
-            let o = a.dot(&b);
+            let o = a * b;
         }
         20 => {
             let a = SMatrix20::repeat(0.1);
             let b = SMatrix20::repeat(0.1);
-            let o = a.dot(&b);
+            let o = a * b;
         }
         200 => {
             let a = SMatrix200::repeat(0.1);
             let b = SMatrix200::repeat(0.1);
-            let o = a.dot(&b);
+            let o = a * b;
         }
         _ => unimplemented!(),
     }
@@ -142,9 +136,12 @@ fn base_matmul(c: &mut Criterion) {
         group.bench_with_input(BenchmarkId::new("Nalgebra", n), n, |b, &n| {
             b.iter(|| matmul_nalgebra(n));
         });
-        group.bench_with_input(BenchmarkId::new("NalgebraStatic", n), n, |b, &n| {
-            b.iter(|| matmul_nalgebra_static(n));
-        });
+        if *n < 1000 {
+            group.bench_with_input(BenchmarkId::new("NalgebraStatic", n), n, |b, &n| {
+                b.iter(|| matmul_nalgebra_static(n));
+            });
+        }
+
         group.bench_with_input(BenchmarkId::new("Torch", n), n, |b, &n| {
             b.iter(|| matmul_torch(n as i64));
         });

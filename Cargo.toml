@@ -20,6 +20,6 @@ criterion = "0.3"
 [[bench]]
 name = "base_case"
 harness = false
-#[[bench]]
-#name = "non_square"
-#harness = false
+[[bench]]
+name = "non_square"
+harness = false
