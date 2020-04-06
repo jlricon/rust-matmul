@@ -9,8 +9,8 @@ type DMatrix = NMatrix<f32, Dynamic, Dynamic, VecStorage<f32, Dynamic, Dynamic>>
 use typenum::{U1000, U200};
 
 fn matmul_torch(n: i64, m: i64) {
-    let a = Tensor::ones(&[n, m], (Kind::Float, Device::Cuda(0))) * 0.1;
-    let b = Tensor::ones(&[m, n], (Kind::Float, Device::Cuda(0))) * 0.1;
+    let a = Tensor::ones(&[n, m], (Kind::Float, Device::Cpu)) * 0.1;
+    let b = Tensor::ones(&[m, n], (Kind::Float, Device::Cpu)) * 0.1;
     let o = a.matmul(&b);
 }
 fn matmul_nalgebra(n: usize, m: usize) {
