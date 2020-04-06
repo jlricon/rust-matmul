@@ -40,4 +40,4 @@ If however one is doing a lot of smaller matrix multiplications that can fit on 
 ## Smaller matrices (And including FMA comparison)
 
 Not Full Metal Alchemist, but Fused Add-Multiply, tested this one on a different laptop. FMA doesn't seem to do much here.
-<img src="small_matrices.svg>
+<img src="small_matrices.svg">
