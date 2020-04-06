@@ -29,11 +29,11 @@ If however one is doing a lot of smaller matrix multiplications that can fit on 
 7. NalgebraStatic is using statically allocated matrices. This has a limit as the stack is not infinitely large, but performs really well at smaller sizes.
 8. Torch is the tch-rs bindings to libtorch, in this case with CUDA enabled.
 
-## Square matrix multiplication
+## Square matrix multiplication (Using nalgebra 0.20)
 
 <img src="base_case.svg"/>
 
-## N x 200 matrix multiplication
+## N x 200 matrix multiplication (Using nalgebra 0.21)
 
 <img src="non_square.svg"/>
 
