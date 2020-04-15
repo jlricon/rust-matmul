@@ -41,3 +41,8 @@ If however one is doing a lot of smaller matrix multiplications that can fit on 
 
 Not Full Metal Alchemist, but Fused Add-Multiply, tested this one on a different laptop. FMA doesn't seem to do much here.
 <img src="small_matrices.svg">
+
+## Branch prediction
+Iterating over two arrays and summing them, then doing one element differently.
+In one case the iteration is done "cleanly" and then one element is changed (So we are actually setting the element twice). In the other case we have an if in the loop and check all the time. The former is faster.
+<img src="branch_pred.svg">
