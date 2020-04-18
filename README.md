@@ -1,4 +1,4 @@
-# The Glorious Rust Matrix Multiplication Benchmark
+# The Glorious Rust Matrix Multiplication Benchmark (And assorted performance benchmarks)
 
 What's the best way to multiply matrices in Rust? Here's a benchmark of a few libraries.
 
