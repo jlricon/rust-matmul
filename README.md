@@ -49,4 +49,5 @@ In one case the iteration is done "cleanly" and then one element is changed (So 
 
 ## Simd arrays
 Here I compare various ways (defining the exact size of the array vs using a function that doesn't have that knowledge encoded in its type) of doing a simple array operation on u8 unsigned integers. Tldr is that for very long arrays it doesn't matter as much what you do. For smaller arrays, using array (Rather than Vec<>) is faster; and interestingly the timings don't increase linearly, at first it goes up and then down and then up!
+
 <img src="simd_arrays.svg>
